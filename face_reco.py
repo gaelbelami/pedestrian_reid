@@ -55,7 +55,7 @@ class FaceReco:
         return face_descriptors, index
     
     def compare_faces(self, face_descriptor, face_descriptors, threshold = 0.6):
-        distances = np.linalg(face_descriptor - face_descriptors, axis=1)
+        distances = np.linalg.norm(face_descriptor - face_descriptors, axis=1)
         min_index = np.argmin(distances)
         if distances[min_index] <= threshold:
             return min_index
@@ -69,6 +69,7 @@ class FaceReco:
         points = self.pose_predictor_68_points(image_np, face.rect)
         face_encodings = self.face_encoder.compute_face_descriptor(image_np, points, num_jitters=2)
         face_encodings = [f for f in face_encodings]
+        face_encodings = np.asarray(face_encodings, dtype=np.float64)
         return face_encodings[np.newaxis, :]
 
     
@@ -76,11 +77,11 @@ class FaceReco:
         l, t, r, b = face
         name_pred = len(index) + 1
         sub_face = cv2.resize(bgr_frame[t:b, l:r], (self.width, self.height))
-        FaceFileName = "dataset/Face/" + \
-            str(name_pred) + ".jpg"
-        cv2.imwrite(FaceFileName, sub_face)
-        index[name_pred - 1] = FaceFileName
+        faceFileName = "dataset/Face/" + str(name_pred) + ".jpg"
+        cv2.imwrite(faceFileName, sub_face)
+        index[name_pred - 1] = faceFileName
         name_pred = str(name_pred)
+        #  print("name", name_pred)
         return name_pred
     
     def detect_known_faces(self, image_np,  return_ori_result = False):      
