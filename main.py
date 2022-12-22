@@ -52,11 +52,13 @@ def person_reid():
                     else:
                         face_descriptors = face_descriptor
                         name_pred = face_reco.sub_faces(bgr_frame, index, (l, t, r, b))
-                    print("name", name_pred)
                     name_pred = int(os.path.split(name_pred)[1].split('.')[0])
                     y3 = t - 15 if t - 15 > 15 else t + 15
                     cv2.putText(bgr_frame, "FaceID: " + str(name_pred), (l + 6, y3), font, 0.6, (0, 255, 255),  box_thickness)
-                    
+        end = time.time()
+        # Frames per second
+        cv2.putText(bgr_frame, f"FPS: {str(int(1 / (end - start)))}", (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2, cv2.LINE_AA)
+        start = end 
         cv2.imshow("Reid", bgr_frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
